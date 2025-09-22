@@ -1,47 +1,81 @@
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { UsuarioModel } from "../models/usuario.model.js";
 
-const SECRET = process.env.JWT_SECRET || "supersecreto";
+import { UsuarioModel } from "../models/usuarioModel.js";
+dotenv.config();
 
 export const AuthController = {
   async register(req, res) {
     try {
       const { nombre, email, password } = req.body;
+
       if (!nombre || !email || !password) {
         return res.status(400).json({ error: "Todos los campos son obligatorios" });
       }
 
-      const existing = await UsuarioModel.buscarPorEmail(req.db, email);
-      if (existing) return res.status(400).json({ error: "Email ya registrado" });
+      // Verificar si ya existe
+      const existe = await UsuarioModel.buscarPorEmail(req.db, email);
+      if (existe) {
+        return res.status(400).json({ error: "El email ya está registrado" });
+      }
 
-      const hashed = await bcrypt.hash(password, 10);
-      const id = await UsuarioModel.crear(req.db, { nombre, email, password: hashed });
+      // Hash de la contraseña
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      res.status(201).json({ message: "Usuario creado", id });
-    } catch (e) {
-      res.status(500).json({ error: "Error en servidor" });
+      // Crear usuario
+      const id = await UsuarioModel.crear(req.db, {
+        nombre,
+        email,
+        password: hashedPassword
+      });
+
+      res.status(201).json({ message: "Usuario registrado correctamente", id });
+    } catch (err) {
+      console.error("❌ Error en register:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     }
   },
-
   async login(req, res) {
     try {
       const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email y contraseña son obligatorios" });
+      }
+
+      // Buscar usuario
       const user = await UsuarioModel.buscarPorEmail(req.db, email);
-      if (!user) return res.status(400).json({ error: "Credenciales inválidas" });
+      if (!user) {
+        return res.status(400).json({ error: "Credenciales inválidas" });
+      }
 
+      // Verificar contraseña
       const valid = await bcrypt.compare(password, user.password);
-      if (!valid) return res.status(400).json({ error: "Credenciales inválidas" });
+      if (!valid) {
+        return res.status(400).json({ error: "Credenciales inválidas" });
+      }
 
+      // Generar token con rol
       const token = jwt.sign(
         { id: user._id, rol: user.rol, nombre: user.nombre },
-        SECRET,
+        JWT_SECRET,
         { expiresIn: "1h" }
       );
 
-      res.json({ message: "Login exitoso", token });
-    } catch (e) {
-      res.status(500).json({ error: "Error en servidor" });
+      res.json({
+        message: "Login exitoso",
+        token,
+        usuario: {
+          id: user._id,
+          nombre: user.nombre,
+          email: user.email,
+          rol: user.rol
+        }
+      });
+    } catch (err) {
+      console.error("❌ Error en login:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     }
-  }
+  }  
 };

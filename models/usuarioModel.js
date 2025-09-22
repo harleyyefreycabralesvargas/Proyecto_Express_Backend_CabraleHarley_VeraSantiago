@@ -1,4 +1,8 @@
+
 import { ObjectId } from "mongodb";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const UsuarioModel = {
   collection: "usuarios",
@@ -16,9 +20,5 @@ export const UsuarioModel = {
 
   async buscarPorEmail(db, email) {
     return await db.collection(this.collection).findOne({ email });
-  },
-
-  async buscarPorId(db, id) {
-    return await db.collection(this.collection).findOne({ _id: new ObjectId(id) });
   }
 };
