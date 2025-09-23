@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { conectar } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import peliculasRoutes from "./routes/peliculaRoutes.js"
 
 dotenv.config();
 const app = express();
@@ -18,5 +19,6 @@ app.use(async (req, res, next) => {
 
 // Rutas
 app.use("/api/auth", authRoutes);
+app.use("/api/peliculas", peliculasRoutes);
 
 app.listen(3000, () => console.log("Servidor en http://localhost:3000"));

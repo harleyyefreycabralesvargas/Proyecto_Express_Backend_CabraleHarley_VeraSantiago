@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import { UsuarioModel } from "../models/usuarioModel.js";
 dotenv.config();
 
+const SECRET = process.env.JWT_SECRET
+
 export const AuthController = {
   async register(req, res) {
     try {
@@ -32,37 +34,22 @@ export const AuthController = {
 
       res.status(201).json({ message: "Usuario registrado correctamente", id });
     } catch (err) {
-      console.error("❌ Error en register:", err);
+      console.error("Error en register:", err);
       res.status(500).json({ error: "Error en el servidor" });
     }
   },
   async login(req, res) {
     try {
       const { email, password } = req.body;
-
-      if (!email || !password) {
-        return res.status(400).json({ error: "Email y contraseña son obligatorios" });
-      }
-
-      // Buscar usuario
       const user = await UsuarioModel.buscarPorEmail(req.db, email);
-      if (!user) {
-        return res.status(400).json({ error: "Credenciales inválidas" });
-      }
-
-      // Verificar contraseña
+      if (!user) return res.status(400).json({ error: "Credenciales inválidas" });
       const valid = await bcrypt.compare(password, user.password);
-      if (!valid) {
-        return res.status(400).json({ error: "Credenciales inválidas" });
-      }
-
-      // Generar token con rol
+      if (!valid) return res.status(400).json({ error: "Credenciales inválidas" });
       const token = jwt.sign(
         { id: user._id, rol: user.rol, nombre: user.nombre },
-        JWT_SECRET,
+        SECRET,
         { expiresIn: "1h" }
       );
-
       res.json({
         message: "Login exitoso",
         token,
@@ -74,8 +61,8 @@ export const AuthController = {
         }
       });
     } catch (err) {
-      console.error("❌ Error en login:", err);
+      console.error("Error en login:", err);
       res.status(500).json({ error: "Error en el servidor" });
     }
-  }  
+  }
 };
