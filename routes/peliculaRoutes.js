@@ -4,13 +4,18 @@ import { authMiddleware, esAdmin } from "../middleWares/auth.js";
 
 const router = express.Router();
 
-// Solo admin puede añadir, actualizar y eliminar
+// CRUD normal
 router.post("/", authMiddleware, esAdmin, PeliculasController.crear);
+router.get("/", authMiddleware, PeliculasController.listarTodas);
+router.get("/:titulo", authMiddleware, PeliculasController.buscarPorTitulo);
 router.put("/:titulo", authMiddleware, esAdmin, PeliculasController.actualizar);
 router.delete("/:titulo", authMiddleware, esAdmin, PeliculasController.eliminar);
 
-// Usuarios logueados pueden ver
-router.get("/", authMiddleware, PeliculasController.listarTodas);
-router.get("/:titulo", authMiddleware, PeliculasController.buscarPorTitulo);
+// Extra: random, top, vistas
+router.get("/extra/random", authMiddleware, PeliculasController.random);
+router.get("/extra/top-rated", authMiddleware, PeliculasController.topRated);
+router.get("/extra/most-viewed", authMiddleware, PeliculasController.mostViewed);
 
+router.post("/:titulo/like", authMiddleware, PeliculasController.darLike);
+router.post("/:titulo/dislike", authMiddleware, PeliculasController.darDislike);
 export default router;

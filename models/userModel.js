@@ -1,12 +1,8 @@
-
-import { ObjectId } from "mongodb";
-import dotenv from "dotenv";
-
-dotenv.config();
-
+// funciones de usuario
 export const UsuarioModel = {
+  // definimos la coleccion que vamos a usar
   collection: "usuarios",
-
+// funcion de crear nuevos usuarios con la coleccion, nombre, email, password,eol,fechaRegistro
   async crear(db, { nombre, email, password, rol = "usuario" }) {
     const result = await db.collection(this.collection).insertOne({
       nombre,
@@ -15,6 +11,7 @@ export const UsuarioModel = {
       rol,
       fechaRegistro: new Date()
     });
+    // retornamos
     return result.insertedId;
   },
 
