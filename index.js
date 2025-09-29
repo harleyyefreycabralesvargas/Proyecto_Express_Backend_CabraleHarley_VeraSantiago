@@ -11,6 +11,8 @@ import authRoutes from "./routes/userRoutes.js";
 import peliculasRoutes from "./routes/peliculaRoutes.js"
 import categoriasRoutes from "./routes/categoriaRoutes.js";
 import reseñasRoutes from "./routes/reseñaRoutes.js";
+import swaggerUI from 'swagger-ui-express'
+import swaggerDocumentation from './swagger.json'  with { type: 'json' };
 // iniciar dotenv
 dotenv.config();
 // crear api y no aplicar restricciones
@@ -25,10 +27,12 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// swagger doc
+app.use('/doc',swaggerUI.serve,swaggerUI.setup(swaggerDocumentation))
 // rutas de la api
-app.use("/api/auth", authRoutes);
-app.use("/api/peliculas", peliculasRoutes);
-app.use("/api/categorias", categoriasRoutes);
-app.use("/api/resenas", reseñasRoutes);
+app.use("/1.5.2/api/auth", authRoutes);
+app.use("/1.5.2/api/peliculas", peliculasRoutes);
+app.use("/1.5.2/api/categorias", categoriasRoutes);
+app.use("/1.5.2/api/resenas", reseñasRoutes);
 // correr el servidor
 app.listen(3000, () => console.log("Servidor en http://localhost:3000"));

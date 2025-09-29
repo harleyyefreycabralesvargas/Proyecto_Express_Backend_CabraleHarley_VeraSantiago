@@ -18,4 +18,6 @@ router.get("/extra/most-viewed", authMiddleware, PeliculasController.mostViewed)
 
 router.post("/:titulo/like", authMiddleware, PeliculasController.darLike);
 router.post("/:titulo/dislike", authMiddleware, PeliculasController.darDislike);
+
+router.get("/buscar/:titulo", PeliculasController.buscarTitulo);
 export default router;

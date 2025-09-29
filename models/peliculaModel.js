@@ -16,6 +16,11 @@ export const PeliculaModel = {
   async buscarPorTitulo(db, titulo) {
     return await db.collection("peliculas").findOne({ titulo });
   },
+  async buscarTitulo(db,titulo) {
+  return await db.collection("peliculas")
+    .find({titulo: { $regex: titulo, $options: "i" }})
+    .toArray();
+},
 
   async actualizar(db, titulo, datos) {
     const result = await db.collection("peliculas").updateOne(
@@ -30,14 +35,12 @@ export const PeliculaModel = {
     return result.deletedCount;
   },
 
-  // Random con $sample
-  async random(db, cantidad = 50) {
+  async random(db, cantidad = 5000000000000000) {
     return await db.collection("peliculas").aggregate([
       { $sample: { size: cantidad } }
     ]).toArray();
   },
 
-  // Mejor rankeadas
   async topRated(db, cantidad = 30) {
     return await db.collection("peliculas")
       .find()
@@ -46,8 +49,7 @@ export const PeliculaModel = {
       .toArray();
   },
 
-  // Más vistas
-  async mostViewed(db, cantidad = 50) {
+  async mostViewed(db, cantidad = 100) {
     return await db.collection("peliculas").aggregate([
       {
         $addFields: {
