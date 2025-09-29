@@ -13,6 +13,8 @@ import categoriasRoutes from "./routes/categoriaRoutes.js";
 import reseñasRoutes from "./routes/reseñaRoutes.js";
 import swaggerUI from 'swagger-ui-express'
 import swaggerDocumentation from './swagger.json'  with { type: 'json' };
+// Definir puerto
+const PORT = process.env.PORT || 3000;
 // iniciar dotenv
 dotenv.config();
 // crear api y no aplicar restricciones
@@ -35,4 +37,6 @@ app.use("/1.5.2/api/peliculas", peliculasRoutes);
 app.use("/1.5.2/api/categorias", categoriasRoutes);
 app.use("/1.5.2/api/resenas", reseñasRoutes);
 // correr el servidor
-app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor en http://localhost:${PORT}`);
+});
