@@ -11,6 +11,7 @@ import authRoutes from "./routes/userRoutes.js";
 import peliculasRoutes from "./routes/peliculaRoutes.js"
 import categoriasRoutes from "./routes/categoriaRoutes.js";
 import reseñasRoutes from "./routes/reseñaRoutes.js";
+import archivoRoutes from "./routes/archivoRoutes.js";
 import swaggerUI from 'swagger-ui-express'
 import swaggerDocumentation from './swagger.json'  with { type: 'json' };
 // Definir puerto
@@ -36,6 +37,7 @@ app.use("/1.5.2/api/auth", authRoutes);
 app.use("/1.5.2/api/peliculas", peliculasRoutes);
 app.use("/1.5.2/api/categorias", categoriasRoutes);
 app.use("/1.5.2/api/resenas", reseñasRoutes);
+app.use("/1.5.2/api/archivo", archivoRoutes);
 // correr el servidor
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor en http://localhost:${PORT}`);
